@@ -16,7 +16,7 @@
           <h1 class="display-4 font-italic">{{posts.title}}</h1>
           <p class="lead my-3">{{posts.short_description | truncatewords:25 }}</p>
           <p class="lead mb-0">
-            <a href="#" class="text-white font-weight-bold"
+            <a href="{% url 'blogs' posts.slug %}" class="text-white font-weight-bold"
               >Continue reading...</a
             >
           </p>
@@ -36,7 +36,7 @@
         <div class="col-md-6">
           <div class="card border-0">
             <div class="card-body">
-              <h3>{{post.title}}</h3>
+              <h3><a href="{% url 'blogs' post.slug %}" class="text-dark">{{post.title}}</a></h3>
               <small class="mb-1 text-muted"
                 >{{post.created_at | timesince}} ago | {{post.author}}</small
               >
@@ -59,7 +59,7 @@
             {% for unfeatured in unfeatured_posts %}
 
             <div class="card-body">
-              <h3>{{unfeatured.title}}</h3>
+              <h3><a href="{% url 'blogs' unfeatured.slug %}" class="text-dark">{{unfeatured.title}}</a></h3>
               <small class="mb-1 text-muted"
                 >{{unfeatured.created_at | timesince}} ago | {{unfeatured.author}}</small
               >
@@ -82,13 +82,19 @@
               </p>
             </div>
 
+            {% if social_links %}
+
             <div class="p-3">
               <h4 class="font-italic">Follow Us</h4>
               <ol class="list-unstyled">
-                <li><a href="#">GitHub</a></li>
-                <li><a href="#">LinkedIn</a></li>
+                {% for i in social_links %}
+
+                <li><a href="{{i.link}}" target="_blank">{{i.platform}}</a></li>
+                {% endfor %}
+                
               </ol>
             </div>
+            {% endif %}
           </aside>
           <!-- /.blog-sidebar -->
         </div>
