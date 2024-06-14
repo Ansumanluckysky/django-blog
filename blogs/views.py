@@ -1,7 +1,8 @@
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
-from blogs.models import Blog, Category
+from blogs.models import Blog, Category, Comment
 from django.db.models import Q
 
 # Create your views here.
@@ -31,8 +32,27 @@ def posts_by_category(request, category_id):
 
 def blogs(request, slug):
     single_blog=get_object_or_404(Blog, slug=slug, status='Published')
+
+    # handling the form submisson for comments form
+    if request.method == 'POST':
+        comment=Comment() # initializing the Comment model
+        comment.user= request.user
+        comment.blog=single_blog
+        comment.comment=request.POST['comment'] # this was the name attribute given to the textarea
+        comment.save()
+        return HttpResponseRedirect(request.path_info) # this is to route to same page from where request came 
+
+
+
+    # comments
+    comments=Comment.objects.filter(blog=single_blog) # blog is the field from comment model
+    comment_count=comments.count()
+    print('Comments =>',comments)
+
     context= {
-        'single_blog': single_blog
+        'single_blog': single_blog,
+        'comments': comments,
+        'comment_count':comment_count,
     }
 
     return render(request, 'blogs.html',context)
